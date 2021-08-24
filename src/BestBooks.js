@@ -1,9 +1,11 @@
 import React from 'react';
+import { withAuth0 } from '@auth0/auth0-react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Jumbotron from 'react-bootstrap/Jumbotron';
 import './BestBooks.css';
 import axios from 'axios';
 import BooksCard from './BooksCard';
+
 
 
 class MyFavoriteBooks extends React.Component {
@@ -15,15 +17,20 @@ class MyFavoriteBooks extends React.Component {
       showData:false
     }
   }
-  getBooks = async (e) => {
-    e.preventDefault();
-    console.log("hiiii");
+  
+  //componentDidMount()
+  componentDidMount = async (e) => {
+    // e.preventDefault();
+    console.log("iiiii");
+    const { user } = this.props.auth0;
+
+    console.log(user);
 
     
-    let booksData = await axios.get(`${process.env.REACT_APP_SERVER}/books`);
+    let booksData = await axios.get(`${process.env.REACT_APP_SERVER}/books?email=${user.email}`);
     console.log(`${process.env.REACT_APP_SERVER}/books`);
     console.log(booksData);
-
+    
     this.setState ({
       books: booksData.data,
       showData:true
@@ -50,10 +57,10 @@ class MyFavoriteBooks extends React.Component {
               )})
                 }
 
-        <button onClick={this.getBooks}>view the books</button>
+        {/* <button onClick={this.getBooks}>view the books</button> */}
       </Jumbotron>
     )
   }
 }
 
-export default MyFavoriteBooks;
+export default withAuth0(MyFavoriteBooks);
