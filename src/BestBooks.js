@@ -5,6 +5,7 @@ import Jumbotron from 'react-bootstrap/Jumbotron';
 import './BestBooks.css';
 import axios from 'axios';
 import BooksCard from './BooksCard';
+import AddBookForm from './AddBookForm';
 
 
 
@@ -21,7 +22,7 @@ class MyFavoriteBooks extends React.Component {
   //componentDidMount()
   componentDidMount = async (e) => {
     // e.preventDefault();
-    console.log("iiiii");
+    console.log("render books componentDidMount");
     const { user } = this.props.auth0;
 
     console.log(user);
@@ -37,6 +38,27 @@ class MyFavoriteBooks extends React.Component {
     })
     console.log(this.state.books)
   }
+
+  addBook = async (e) =>{
+    e.preventDefault();
+console.log("add book functio");
+const { user } = this.props.auth0;
+
+
+let bookInfo = {
+  title:e.target.title.value,
+  description: e.target.description.value,
+  status:e.target.status.value,
+  email: user.email
+}
+console.log(bookInfo);
+let bookData = await axios.post(`${process.env.REACT_APP_SERVER}/addBook`,bookInfo)
+this.setState({
+  books: bookData.data
+}) 
+this.componentDidMount();
+  }
+
   render() {
     return(
       <Jumbotron>
@@ -44,7 +66,8 @@ class MyFavoriteBooks extends React.Component {
         <p>
           This is a collection of my favorite books
         </p>
-        
+        <AddBookForm addBook={this.addBook}/>
+
         {this.state.showData &&
           this.state.books.map((item, idx) => {
             return (
