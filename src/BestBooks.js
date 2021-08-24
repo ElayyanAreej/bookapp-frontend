@@ -59,6 +59,17 @@ this.setState({
 this.componentDidMount();
   }
 
+  deleteBook= async (bookID) =>{
+    const { user } = this.props.auth0;
+
+    let bookData= await axios.delete(`${process.env.REACT_APP_SERVER}/deleteBook/${bookID}?email=${user.email}`)
+    console.log(`${process.env.REACT_APP_SERVER}/deleteBook/${bookID}?email=${user.email}`);
+    this.setState({
+      books: bookData.data
+    })
+    this.componentDidMount();
+  }
+
   render() {
     return(
       <Jumbotron>
@@ -73,10 +84,12 @@ this.componentDidMount();
             return (
               <BooksCard
                 Key={idx}
+                bookId={item._id}
                 title={item.title}
                 description={item.description} 
                 status={item.status}
-                email={item.email}/>
+                email={item.email}
+                deleteBook = {this.deleteBook}/>
               )})
                 }
 

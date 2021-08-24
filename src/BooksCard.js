@@ -1,8 +1,12 @@
 import React from "react";
 import Card from "react-bootstrap/Card";
+import Button from "react-bootstrap/Button";
 import Bookscard from "./BooksCard.css";
 
 class BooksCard extends React.Component {
+  deleteBookFun = () =>{
+    this.props.deleteBook(this.props.bookId)
+}
   render() {
     return (
       <Card style={{ width: "18rem" }}>
@@ -15,6 +19,7 @@ class BooksCard extends React.Component {
           <Card.Subtitle className="mb-2 text-muted">
             Email:{this.props.email}
           </Card.Subtitle>
+          <Button variant="primary" onClick={this.deleteBookFun}>Delete</Button>
         </Card.Body>
       </Card>
     );
