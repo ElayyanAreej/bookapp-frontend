@@ -7,6 +7,9 @@ class BooksCard extends React.Component {
   deleteBookFun = () =>{
     this.props.deleteBook(this.props.bookId)
 }
+updateBookFun = () =>{
+  this.props.updateBook(this.props.bookId)
+}
   render() {
     return (
       <Card style={{ width: "18rem" }}>
@@ -20,6 +23,7 @@ class BooksCard extends React.Component {
             Email:{this.props.email}
           </Card.Subtitle>
           <Button variant="primary" onClick={this.deleteBookFun}>Delete</Button>
+          <Button variant="primary" onClick={this.updateBookFun}>update</Button>
         </Card.Body>
       </Card>
     );

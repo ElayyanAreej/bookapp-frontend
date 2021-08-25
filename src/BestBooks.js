@@ -7,6 +7,7 @@ import axios from "axios";
 import BooksCard from "./BooksCard";
 import AddBookForm from "./AddBookForm";
 import BookModel from "./BookModel.js";
+import UpdateBookForm from "./UpdateBookForm.js";
 
 class MyFavoriteBooks extends React.Component {
   constructor(props) {
@@ -15,6 +16,8 @@ class MyFavoriteBooks extends React.Component {
       books: [],
       showData: false,
       showModel: false,
+      chosenBookToUpdateData: {},
+      showToDataUpdata: false,
     };
   }
 
@@ -87,12 +90,50 @@ class MyFavoriteBooks extends React.Component {
     this.componentDidMount();
   };
 
+  updateBook = async (bookID) => {
+    console.log("in update fun");
+    //to clear it first
+    await this.setState({
+      showToDataUpdata: false,
+    });
+
+    // show the data to user
+    let chosenBookInfo = this.state.books.find((book) => {
+      return book._id === bookID;
+    });
+    console.log(chosenBookInfo);
+
+    this.setState({
+      chosenBookToUpdateData: chosenBookInfo,
+      showToDataUpdata: true,
+    });
+  };
+
+  updateBookToApiServer = async (e) => {
+    e.preventDefault();
+    console.log("updateBookToApiServer");
+    const { user } = this.props.auth0;
+
+   let updatedBookInfo={
+      title:e.target.title.value,
+      description:e.target.description.value,
+      status:e.target.status.value,
+    };
+    console.log("updated data",updatedBookInfo);
+
+    let BookID = this.state.chosenBookToUpdateData._id;
+    let booksData = await axios.put(`${process.env.REACT_APP_SERVER}/updateBook/${BookID}?email=${user.email}`, updatedBookInfo);
+    this.setState({
+      books: booksData.data
+    })
+    this.componentDidMount();
+  };
   render() {
     return (
       <Jumbotron>
         <h1>My Favorite Books</h1>
         <p>This is a collection of my favorite books</p>
-        <button onClick={this.handleShow}>view the form</button>
+        <button onClick={this.handleShow}>Add A Book! </button>
         {/* <AddBookForm addBook={this.addBook} /> */}
         <BookModel
           handleShow={this.handleShow}
@@ -100,6 +141,13 @@ class MyFavoriteBooks extends React.Component {
           showModel={this.state.showModel}
           addBook={this.addBook}
         />
+        {this.state.showToDataUpdata && (
+          <UpdateBookForm
+            chosenBookToUpdateData={this.state.chosenBookToUpdateData}
+            updateBookToApiServer={this.updateBookToApiServer}
+          />
+        )}
+
         {this.state.showData &&
           this.state.books.map((item, idx) => {
             return (
@@ -111,6 +159,7 @@ class MyFavoriteBooks extends React.Component {
                 status={item.status}
                 email={item.email}
                 deleteBook={this.deleteBook}
+                updateBook={this.updateBook}
               />
             );
           })}
